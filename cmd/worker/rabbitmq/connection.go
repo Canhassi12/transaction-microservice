@@ -21,7 +21,7 @@ func Connection() (*amqp091.Channel, context.Context, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf(err.Error())
 	}
-	defer ch.Close()
+	// defer ch.Close()
 
 	return ch, ctx, nil
 }

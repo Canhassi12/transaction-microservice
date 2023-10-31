@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"os"
 
-	rabbitmq "github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitMQ"
+	"github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq"
+	"github.com/Canhassi12/transaction-microsservice/db"
 	"github.com/Canhassi12/transaction-microsservice/internal/service"
 )
 
 func main() {
 	ch, _, err := rabbitmq.Connection()
-
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
+
+	db := db.Connect()
 	
 	msgs, err := ch.Consume(
 		"orders",
@@ -25,7 +27,6 @@ func main() {
 		false,
 		nil,
 	)
-
 	if err != nil {
 		fmt.Print("consume error ", err.Error())
 	}
@@ -33,7 +34,7 @@ func main() {
 	forever := make(chan bool)
 	go func() {
 		for order := range msgs {
-			service.Create_transaction(order)
+			service.Create_transaction(db, order)
 		}
 	}()
 

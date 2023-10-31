@@ -3,13 +3,15 @@ package db
 import (
 	"database/sql"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func Connect() *sql.DB {
-	db, err := sql.Open("mysql", "user:password@/microsservices") 
+	db, err := sql.Open("mysql", "root:phpehmelhor@/tmicroservice") 
 		
 	if err != nil {
-		panic("f na conexão")
+		panic(err.Error())
 	}
 
 	db.SetConnMaxLifetime(time.Minute * 3)
