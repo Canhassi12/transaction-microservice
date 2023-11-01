@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os/exec"
 	"time"
 
@@ -53,16 +51,16 @@ func Create_transaction(q *sql.DB, order amqp091.Delivery) {
 }
 
 func process_payment(payload *bytes.Buffer) map[string]interface{} {
-	resp, err := http.Post("https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6", "application/json", payload)
-	if err != nil {
-		fmt.Printf("Erro ao fazer a requisição: %v\n", err)
-	}
-	defer resp.Body.Close()
+	// resp, err := http.Post("https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6", "application/json", payload)
+	// if err != nil {
+	// 	fmt.Printf("Erro ao fazer a requisição: %v\n", err)
+	// }
+	// defer resp.Body.Close()
 
-	_, err = io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Printf("Erro ao ler a resposta: %v\n", err)
-	}
+	// _, err = io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Printf("Erro ao ler a resposta: %v\n", err)
+	// }
 
 	id, _ := exec.Command("uuidgen").Output() 
 
