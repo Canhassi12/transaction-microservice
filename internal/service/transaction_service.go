@@ -6,24 +6,25 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq/producer/transaction_queue"
 	"github.com/Canhassi12/transaction-microsservice/db"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/rabbitmq/amqp091-go"
 )
 
-func CreateTransaction(q *sqlx.DB, order amqp091.Delivery) {
+func CreateTransaction(q *sqlx.DB, order amqp091.Delivery) string {
+	println("aaaa")
+
 	var receivedOrder db.Order
 	if err := json.Unmarshal(order.Body, &receivedOrder); err != nil {
 		fmt.Println("Error deserializing order:", err)
-		return
+		panic("aqui se der erro f")
 	}
 
 	jsonData, err := json.Marshal(receivedOrder)
     if err != nil {
         fmt.Printf("Erro ao serializar a struct: %v\n", err)
-        return
+        panic("aqui se der erro f")
     }
 
 	payload := bytes.NewBuffer([]byte(jsonData))
@@ -35,7 +36,9 @@ func CreateTransaction(q *sqlx.DB, order amqp091.Delivery) {
 		panic("erro insert f")
 	}
 
-	transaction_queue.Send_transaction(t)
+	println("a aaaa")
+
+	return t.Status
 }
 
 func processPayment(payload *bytes.Buffer) map[string]interface{} {

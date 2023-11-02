@@ -1,55 +1,39 @@
-package transaction_queue
+package transactionQueue
 
 import (
-	"github.com/Canhassi12/transaction-microsservice/db"
+	"fmt"
+
+	"github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq"
+	"github.com/rabbitmq/amqp091-go"
 )
 
-func Send_transaction(t db.Transaction) {
-	// conn, err := amqp091.Dial("amqp://user:password@localhost:5672/")
-	// if err != nil {
-	// 	fmt.Println("failed Initializing Broker Connection", err.Error())
-	// }
+func SendTransactionStatus(status string, qp *rabbitmq.QueueConnection) {
+	q, err := qp.Ch.QueueDeclare(
+		"transactions",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
+	err = qp.Ch.PublishWithContext(qp.Ctx,
+		"",           // exchange
+		q.Name,       // routing key
+		false,        // mandatory
+		false,
+		amqp091.Publishing {
+		  DeliveryMode: amqp091.Persistent,
+		  ContentType:  "application/json",
+		  Body:         []byte(status),
+		})
 
-	// ch, err := conn.Channel()
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
-	// q, err := ch.QueueDeclare(
-	// 	"transactions",
-	// 	false,
-	// 	false,
-	// 	false,
-	// 	false,
-	// 	nil,
-	// )
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// orderJSON, err := json.Marshal(order)
-	// if err != nil {
-	// 	fmt.Println("Error serializing order:", err)
-	// 	return
-	// }
-	
-	// err = ch.PublishWithContext(ctx,
-	// 	"",           // exchange
-	// 	q.Name,       // routing key
-	// 	false,        // mandatory
-	// 	false,
-	// 	amqp091.Publishing {
-	// 	  DeliveryMode: amqp091.Persistent,
-	// 	  ContentType:  "application/json",
-	// 	  Body:         orderJSON,
-	// 	})
-
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
-
-    // fmt.Println("Successfully Published Message to Queue")
+    fmt.Println("Successfully Published Transaction Status to ORDER microservice")
 }

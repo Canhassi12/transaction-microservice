@@ -5,20 +5,21 @@ import (
 	"os"
 
 	"github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq"
+	transactionQueue "github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq/producer/transaction_queue"
 	"github.com/Canhassi12/transaction-microsservice/db"
 	"github.com/Canhassi12/transaction-microsservice/internal/service"
 )
 
 func main() {
-	ch, _, err := rabbitmq.Connection()
-	if err != nil {
+	var qp = rabbitmq.QueueConnection{}
+	if err := qp.Connection(); err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
-
+	
 	db := db.Connect()
 	
-	msgs, err := ch.Consume(
+	msgs, err := qp.Ch.Consume(
 		"orders",
 		"",
 		true,
@@ -34,11 +35,13 @@ func main() {
 	forever := make(chan bool)
 	go func() {
 		for order := range msgs {
-			service.CreateTransaction(db, order)
+			status := service.CreateTransaction(db, order)
+
+			transactionQueue.SendTransactionStatus(status, &qp)
 		}
 	}()
 
-	fmt.Println("Successfully Connected to our RabbitMQ Instance")
 	fmt.Println(" [*] - Waiting for messages")
 	<-forever
 }
+

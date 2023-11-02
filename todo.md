@@ -1,12 +1,5 @@
 # TODO
-    * Retorna para pedidos
-    * Análises de problemas
-
-
-
-retry pattern 
-
-logs - observabilidade
-
-backofff
-
+    * Análises de problemas / TRTAR ERROR!!!!
+    * OBSERVABILIDADE
+    * retry pattern 
+    * backofff

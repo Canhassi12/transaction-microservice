@@ -25,7 +25,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	// defer ch.Close()
+	// defer ch.Close() 
 
 	if err != nil {
 		println(err.Error())

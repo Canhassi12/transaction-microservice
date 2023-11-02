@@ -8,10 +8,15 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 )
 
-func Connection() (*amqp091.Channel, context.Context, error) {
+type QueueConnection struct {
+	Ch *amqp091.Channel
+	Ctx context.Context
+}
+
+func (qp *QueueConnection) Connection() error {
 	conn, err := amqp091.Dial("amqp://guest:guest@rabbit:5672/")
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed Initializing Broker Connection %s", err.Error())
+		return fmt.Errorf("failed Initializing Broker Connection %s", err.Error())
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -19,9 +24,12 @@ func Connection() (*amqp091.Channel, context.Context, error) {
 
 	ch, err := conn.Channel()
 	if err != nil {
-		return nil, nil, fmt.Errorf(err.Error())
+		return fmt.Errorf(err.Error())
 	}
 	// defer ch.Close()
 
-	return ch, ctx, nil
+	qp.Ch = ch
+	qp.Ctx = ctx
+
+	return err
 }
