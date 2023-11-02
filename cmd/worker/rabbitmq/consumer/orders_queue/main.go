@@ -34,7 +34,7 @@ func main() {
 	forever := make(chan bool)
 	go func() {
 		for order := range msgs {
-			service.Create_transaction(db, order)
+			service.CreateTransaction(db, order)
 		}
 	}()
 

@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	conn, err := amqp091.Dial("amqp://user:password@localhost:5672/")
+	conn, err := amqp091.Dial("amqp://guest:guest@rabbit:5672/")
 	if err != nil {
 		fmt.Println("failed Initializing Broker Connection", err.Error())
 	}

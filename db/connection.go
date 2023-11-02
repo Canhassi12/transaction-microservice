@@ -1,22 +1,15 @@
 package db
 
 import (
-	"database/sql"
-	"time"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
-func Connect() *sql.DB {
-	db, err := sql.Open("mysql", "root:phpehmelhor@/tmicroservice") 
-		
-	if err != nil {
-		panic(err.Error())
-	}
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
+func Connect() *sqlx.DB {
+	db, err := sqlx.Open("postgres", "user=root dbname=tmicroservice password=root host=postgres sslmode=disable")
+    if err != nil {
+        panic(err.Error())
+    }
 
 	return db
 }

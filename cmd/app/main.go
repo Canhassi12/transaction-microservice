@@ -1,28 +1,29 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/Canhassi12/transaction-microsservice/api/handler"
 	"github.com/Canhassi12/transaction-microsservice/db"
+	"github.com/jmoiron/sqlx"
 )
 
 
 func main() {
-	// r := handler.RegisterRoutes()
+	r := handler.RegisterRoutes()
 
 	db := db.Connect()
 	if err := executeMigrateFile(db); err != nil {
 		println(err.Error())
 	}
 
-    // r.Run(":8080")
+    r.Run(":8080")
 }
 
 
-func executeMigrateFile(db *sql.DB) error {
+func executeMigrateFile(db *sqlx.DB) error {
     content, err := os.ReadFile("./db/migrate.sql")
     if err != nil {
         return fmt.Errorf("error to read migrate file: %w", err)

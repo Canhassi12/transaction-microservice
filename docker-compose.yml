@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    networks:
+      - app
+    depends_on:
+      - postgres
+      - rabbit
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "root"
+      POSTGRES_DB: "tmicroservice"
+    ports:
+      - "5432:5432"
+    networks:
+      - app
+  rabbit: 
+    image: rabbitmq:3-management-alpine
+    # volumes:
+    #   - type: bind
+    #     source: ./rabbitmq-enabled-plugins
+    #     target: /etc/rabbitmq/enabled_plugins
+    #   - type: bind
+    #     source: ./rabbitmq.config
+    #     target: /etc/rabbitmq/rabbitmq.config
+    #   - type: bind
+    #     source: ./rabbitmq-defs.json
+    #     target: /etc/rabbitmq/rabbitmq-defs.json
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app
+      
+networks:
+  app:
