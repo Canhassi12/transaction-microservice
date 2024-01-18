@@ -13,12 +13,12 @@ import (
 func main() {
 	var qp = rabbitmq.QueueConnection{}
 	if err := qp.Connection(); err != nil {
-		println(err.Error())
+		panic(err.Error())
 		os.Exit(1)
 	}
-	
+
 	db := db.Connect()
-	
+
 	msgs, err := qp.Ch.Consume(
 		"orders",
 		"",
@@ -44,4 +44,3 @@ func main() {
 	fmt.Println(" [*] - Waiting for messages")
 	<-forever
 }
-

@@ -9,7 +9,7 @@ import (
 )
 
 type QueueConnection struct {
-	Ch *amqp091.Channel
+	Ch  *amqp091.Channel
 	Ctx context.Context
 }
 

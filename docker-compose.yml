@@ -1,8 +1,10 @@
 services:
   app:
     build: .
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
+    environment:
+      - GOPROXY=direct
     networks:
       - app
     depends_on:
@@ -13,7 +15,7 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: "root"
-      POSTGRES_USER: "root"
+      POSTGRES_USER: "canhas"
       POSTGRES_DB: "tmicroservice"
     ports:
       - "5432:5432"
