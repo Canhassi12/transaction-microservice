@@ -1,15 +1,15 @@
 services:
-  app:
-    build: .
-    # volumes:
-    #   - .:/app
-    environment:
-      - GOPROXY=direct
-    networks:
-      - app
-    depends_on:
-      - postgres
-      - rabbit
+  # app:
+  #   build: .
+  #   # volumes:
+  #   #   - .:/app
+  #   environment:
+  #     - GOPROXY=direct
+  #   networks:
+  #     - app
+  #   depends_on:
+  #     - postgres
+  #     - rabbit
 
   postgres:
     image: postgres

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq"
 	transactionQueue "github.com/Canhassi12/transaction-microsservice/cmd/worker/rabbitmq/producer/transaction_queue"
@@ -14,7 +13,6 @@ func main() {
 	var qp = rabbitmq.QueueConnection{}
 	if err := qp.Connection(); err != nil {
 		panic(err.Error())
-		os.Exit(1)
 	}
 
 	db := db.Connect()

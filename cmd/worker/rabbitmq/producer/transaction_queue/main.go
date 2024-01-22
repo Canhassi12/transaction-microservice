@@ -8,32 +8,21 @@ import (
 )
 
 func SendTransactionStatus(status string, qp *rabbitmq.QueueConnection) {
-	q, err := qp.Ch.QueueDeclare(
-		"transactions",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		fmt.Println(err)
-	}
 
-	err = qp.Ch.PublishWithContext(qp.Ctx,
-		"",           // exchange
-		q.Name,       // routing key
-		false,        // mandatory
+	err := qp.Ch.PublishWithContext(qp.Ctx,
+		"",             // exchange
+		"transactions", // routing key
+		false,          // mandatory
 		false,
-		amqp091.Publishing {
-		  DeliveryMode: amqp091.Persistent,
-		  ContentType:  "application/json",
-		  Body:         []byte(status),
+		amqp091.Publishing{
+			DeliveryMode: amqp091.Persistent,
+			ContentType:  "application/json",
+			Body:         []byte(status),
 		})
 
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-    fmt.Println("Successfully Published Transaction Status to ORDER microservice")
+	fmt.Println("Successfully Published Transaction Status to ORDER microservice")
 }

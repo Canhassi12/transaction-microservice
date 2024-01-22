@@ -6,7 +6,7 @@ import (
 )
 
 func Connect() *sqlx.DB {
-	db, err := sqlx.Open("postgres", "user=canhas dbname=tmicroservice password=root host=postgres sslmode=disable")
+	db, err := sqlx.Open("postgres", "user=canhas dbname=tmicroservice password=root host=localhost sslmode=disable")
 	if err != nil {
 		panic(err.Error())
 	}

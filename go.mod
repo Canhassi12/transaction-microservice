@@ -8,7 +8,6 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/google/uuid v1.4.0
-	github.com/stretchr/testify/assert v1.7.0
 )
 
 require (

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/Canhassi12/transaction-microsservice/db"
@@ -12,7 +11,7 @@ import (
 )
 
 func main() {
-	conn, err := amqp091.Dial("amqp://guest:guest@rabbit:5672/")
+	conn, err := amqp091.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		fmt.Println("failed Initializing Broker Connection", err.Error())
 	}
@@ -24,49 +23,30 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	// defer ch.Close()
 
-	// defer ch.Close() 
-
-	if err != nil {
-		println(err.Error())
-		os.Exit(1)
-	}
-
-	q, err := ch.QueueDeclare(
-		"orders",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	address := db.Address {
-		Street: "Rua canhas",
-		StreetNumber: 12,
+	address := db.Address{
+		Street:        "Rua canhas",
+		StreetNumber:  12,
 		Neighbourhood: "Logo ali",
-		District: "Aqui que eh aqui?",
-		City: "São Paulo",
-		State: "São Paulo",
-		Country: "Brazil",
-		Zipcode: "95275971",
+		District:      "Aqui que eh aqui?",
+		City:          "São Paulo",
+		State:         "São Paulo",
+		Country:       "Brazil",
+		Zipcode:       "95275971",
 	}
 
-	order := db.Order {
-		ID: 2,
-		Status: "pending",
-		UserId: 1,
-		Amount: 200,
-		PaymentType: "credit_card",
+	order := db.Order{
+		ID:             2,
+		Status:         "pending",
+		UserId:         1,
+		Amount:         200,
+		PaymentType:    "credit_card",
 		DocumentNumber: "80704129094",
-		Address: address,
-		Phone: "5511971178901",
-		FullName: "É O Canhas",
-		Email: "canhassi@gmail.com",
+		Address:        address,
+		Phone:          "5511971178901",
+		FullName:       "É O Canhas",
+		Email:          "canhassi@gmail.com",
 	}
 
 	orderJSON, err := json.Marshal(order)
@@ -74,21 +54,21 @@ func main() {
 		fmt.Println("Error serializing order:", err)
 		return
 	}
-	
+
 	err = ch.PublishWithContext(ctx,
-		"",           // exchange
-		q.Name,       // routing key
-		false,        // mandatory
+		"",       // exchange
+		"orders", // routing key
+		false,    // mandatory
 		false,
-		amqp091.Publishing {
-		  DeliveryMode: amqp091.Persistent,
-		  ContentType:  "application/json",
-		  Body:         orderJSON,
+		amqp091.Publishing{
+			DeliveryMode: amqp091.Persistent,
+			ContentType:  "application/json",
+			Body:         orderJSON,
 		})
 
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-    fmt.Println("Successfully Published Message to Queue")
+	fmt.Println("Successfully Published Message to Queue")
 }

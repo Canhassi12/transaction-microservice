@@ -34,8 +34,6 @@ func CreateTransaction(q *sqlx.DB, order amqp091.Delivery) string {
 		panic("erro insert f")
 	}
 
-	println(t.Status, "status aa")
-
 	return t.Status
 }
 
