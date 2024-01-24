@@ -65,7 +65,6 @@ func main() {
 			ContentType:  "application/json",
 			Body:         orderJSON,
 		})
-
 	if err != nil {
 		fmt.Println(err.Error())
 	}

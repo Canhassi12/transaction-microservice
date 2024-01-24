@@ -30,6 +30,53 @@ func (qp *QueueConnection) Connection() error {
 	qp.Ch = ch
 	qp.Ctx = ctx
 
+	_, err = ch.QueueDeclare(
+		"dlq",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("fail declare A %s", err.Error())
+	}
+
+	err = ch.ExchangeDeclare(
+		"dlx",
+		"direct",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("fail declare 22 %s", err.Error())
+	}
+
+	err = ch.QueueBind("dlq", "alert", "dlx", false, nil)
+	if err != nil {
+		return fmt.Errorf("fail declare 33%s", err.Error())
+	}
+
+	args := amqp091.Table{
+		"x-dead-letter-exchange": "dlx",
+		"x-message-ttl":          int32(5000),
+	}
+
+	_, err = ch.QueueDeclare(
+		"orders",
+		false,
+		false,
+		false,
+		false,
+		args,
+	)
+	if err != nil {
+		return fmt.Errorf("fail declare ooie %s", err.Error())
+	}
+
 	// defer ch.Close()
 	_, err = ch.QueueDeclare(
 		"transactions",
@@ -40,19 +87,7 @@ func (qp *QueueConnection) Connection() error {
 		nil,
 	)
 	if err != nil {
-		return fmt.Errorf("fail declare %s", err.Error())
-	}
-
-	_, err = ch.QueueDeclare(
-		"orders",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		return fmt.Errorf("fail declare 2 %s", err.Error())
+		return fmt.Errorf("fail declare a bb%s", err.Error())
 	}
 
 	return err
