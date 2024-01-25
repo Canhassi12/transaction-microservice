@@ -29,10 +29,14 @@ func CreateTransaction(q *sqlx.DB, order amqp091.Delivery) string {
 	payment := processPayment(payload)
 
 	var t = db.Transaction{}
-	result := q.QueryRowx(`INSERT INTO transactions (status, user_id, order_id, paid_at, payment_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, status, user_id, order_id, paid_at, payment_id`, "paid", receivedOrder.UserId, receivedOrder.ID, payment["paid_at"], payment["id"]).StructScan(&t)
+	result := q.QueryRowx(`INSERT INTO transactions (status, user_id, order_id, paid_at, payment_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, status, user_id, order_id, paid_at, payment_id`, "error", receivedOrder.UserId, receivedOrder.ID, payment["paid_at"], payment["id"]).StructScan(&t)
 	if result != nil {
 		panic("erro insert f")
 	}
+
+	a, _ := order.Headers["attempts"].(int32)
+
+	println("tentativa ", a)
 
 	return t.Status
 }

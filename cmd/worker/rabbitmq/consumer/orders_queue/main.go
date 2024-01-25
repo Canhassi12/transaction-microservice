@@ -42,9 +42,10 @@ func main() {
 				if !ok {
 					attempts = 1
 				}
-
+				println("tentativa aqui", attempts)
 				if attempts >= 3 {
 					println("Error to process order, sending to DLQ")
+					order.Ack(false)
 				}
 
 				err = qp.Ch.PublishWithContext(qp.Ctx,
@@ -53,17 +54,20 @@ func main() {
 					false,    // mandatory
 					false,
 					amqp091.Publishing{
-						DeliveryMode: amqp091.Persistent,
-						ContentType:  "application/json",
-						Body:         order.Body,
+						ContentType: "application/json",
+						Body:        order.Body,
+						Headers: amqp091.Table{
+							"attempts": attempts + 1,
+						},
 					})
 				if err != nil {
 					fmt.Println(err.Error())
 				}
-			}
-			order.Ack(true)
+			} else {
+				order.Ack(true)
 
-			transactionQueue.SendTransactionStatus(status, &qp)
+				transactionQueue.SendTransactionStatus(status, &qp)
+			}
 		}
 	}()
 
